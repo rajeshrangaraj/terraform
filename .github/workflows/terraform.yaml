@@ -3,10 +3,10 @@ name: Terraform EC2 Pipeline
 on:
   pull_request:
     branches: [main]
-    paths: ["infra/**"]
+    paths: ["ec2/**"]
   push:
     branches: [main]
-    paths: ["infra/**"]
+    paths: ["ec2/**"]
 
 permissions:
   id-token: write
@@ -16,7 +16,9 @@ permissions:
 env:
   TF_VERSION: "1.8.0"
   AWS_REGION: "eu-west-2"
-  TF_DIR: "infra/env/prod"
+  TF_DIR: "ec2/infra/env/prod"
+  PLAN_ROLE:   "arn:aws:iam::707421297413:role/github-actions-terraform-plan"
+  APPLY_ROLE:  "arn:aws:iam::707421297413:role/github-actions-terraform-apply"
 
 jobs:
   validate:

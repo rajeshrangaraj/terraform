@@ -20,3 +20,5 @@ plan_output.txt
 crash.log
 crash.*.log
 
+terraform.exe
+*.exe
