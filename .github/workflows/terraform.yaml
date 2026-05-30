@@ -1,0 +1,33 @@
+name: Terraform EC2 Pipeline
+
+on:
+  pull_request:
+    branches: [main]
+    paths: ["infra/**"]
+  push:
+    branches: [main]
+    paths: ["infra/**"]
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+env:
+  TF_VERSION: "1.8.0"
+  AWS_REGION: "eu-west-2"
+  TF_DIR: "infra/env/prod"
+
+jobs:
+  validate:
+    name: Validate & Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout
+
+      - name: Format check
+        run: terraform fmt -check -recursive infra/
+
+      - name: Validate
+        run: terraform validate
+        working-directory: ${{ env.TFDIR }}
