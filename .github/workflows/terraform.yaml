@@ -67,8 +67,8 @@ jobs:
         id: account
         run: |
           ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-          echo "account_id=$ACCOUNT_ID" >> $GITHUB_OUT
-          echo "Running in Account: $ACCOUNT_ID"
+          echo "account_id=${ACCOUNT_ID}" >> ${GITHUB_OUTPUT}
+          echo "Running in Account: ${ACCOUNT_ID}"
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
