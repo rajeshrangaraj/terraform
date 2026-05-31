@@ -1,4 +1,4 @@
-outputs "instance_id" {
+output "instance_id" {
   value = module.app_server.instance_id
 }
 
