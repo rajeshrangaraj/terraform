@@ -22,12 +22,12 @@ data "aws_ami" "this" {
 
 #-- EC2  -----------------------------------
 resource "aws_instance" "this" {
-    ami           = data.aws_ami.this.id
-    instance_type = var.instance_type
+  ami           = data.aws_ami.this.id
+  instance_type = var.instance_type
 
-    tags = {
-        Name = var.name
-        Region = data.aws_region.current.name
-        AccountID = data.aws_caller_identity.current.id
-    }
+  tags = {
+    Name      = var.name
+    Region    = data.aws_region.current.name
+    AccountID = data.aws_caller_identity.current.id
+  }
 }

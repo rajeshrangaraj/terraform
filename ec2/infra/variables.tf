@@ -1,17 +1,17 @@
 variable "env" {
-    type = string
+  type = string
 }
 
 variable "aws_region" {
-    type = string
-    default = "eu-west-2"
+  type    = string
+  default = "eu-west-2"
 }
 
 variable "ami_id" {
-    type = string
+  type = string
 }
 
 variable "instance_type" {
-    type = string
-    default = "t2.micro"
+  type    = string
+  default = "t2.micro"
 }
