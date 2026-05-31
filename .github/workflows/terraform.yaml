@@ -17,7 +17,7 @@ permissions:
 env:
   TF_VERSION: "1.15"
   AWS_REGION: "eu-west-2"
-  TF_DIR: "ec2/infra/envs/prod"
+  TF_DIR: "ec2/infra"
 
 jobs:
   validate:
@@ -82,7 +82,7 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -detailed-exitcode -out=tfplan
+        run: terraform plan -detailed-exitcode -out=tfplan -var-file="envs/prod/terraform.tfvars"
         working-directory: ${{ env.TF_DIR }}
         env: 
           TF_VAR_account_id: ${{ steps.get-account.outputs.account_id }}
