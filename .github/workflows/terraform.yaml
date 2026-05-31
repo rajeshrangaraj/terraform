@@ -35,7 +35,7 @@ jobs:
           terraform_version: ${{ env.TF_VERSION }}
 
       - name: Terraform format check
-        run: terraform fmt -check -recursive infra/
+        run: terraform fmt -check -recursive terraform/ec2/
 
       - name: Validate
         run: terraform validate
