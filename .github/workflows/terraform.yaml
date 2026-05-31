@@ -75,13 +75,13 @@ jobs:
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
-      - name: Terraform Init
-        run: terraform init
-        working-directoy: ${{ env.TF_DIR }}
+      # - name: Terraform Init
+      #   run: terraform init
+      #   working-directoy: ${{ env.TF_DIR }}
 
-      - name: Terraform Plan
-        id: plan
-        run: terraform plan -detailed-exitcode -out=tfplan
-        working-directory: ${{ env.TF_DIR }}
-        env: 
-          TF_VAR_account_id: ${{ steps.get-account.outputs.account_id }}
+      # - name: Terraform Plan
+      #   id: plan
+      #   run: terraform plan -detailed-exitcode -out=tfplan
+      #   working-directory: ${{ env.TF_DIR }}
+      #   env: 
+      #     TF_VAR_account_id: ${{ steps.get-account.outputs.account_id }}
