@@ -16,7 +16,7 @@ permissions:
 env:
   TF_VERSION: "1.8.0"
   AWS_REGION: "eu-west-2"
-  TF_DIR: "ec2/infra/environments/prod"
+  TF_DIR: "ec2/infra/envs/prod"
   PLAN_ROLE:   "arn:aws:iam::707421297413:role/github-actions-terraform-plan"
   APPLY_ROLE:  "arn:aws:iam::707421297413:role/github-actions-terraform-apply"
 
