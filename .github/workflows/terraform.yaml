@@ -16,7 +16,7 @@ permissions:
 env:
   TF_VERSION: "1.8.0"
   AWS_REGION: "eu-west-2"
-  TF_DIR: "ec2/infra/env/prod"
+  TF_DIR: "ec2/infra/environments/prod"
   PLAN_ROLE:   "arn:aws:iam::707421297413:role/github-actions-terraform-plan"
   APPLY_ROLE:  "arn:aws:iam::707421297413:role/github-actions-terraform-apply"
 
@@ -34,7 +34,7 @@ jobs:
           terraform_version: ${{ env.TF_VERSION }}
 
       - name: Terraform format check
-        run: terraform fmt -check -recursive terraform/ec2/
+        run: terraform fmt -check -recursive ec2/
 
       - name: Validate
         run: terraform validate
