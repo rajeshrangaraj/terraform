@@ -4,6 +4,7 @@ on:
   push:
     branches: 
       - main
+      - feat/my-ec2-change
   pull_request:
     branches: 
       - main
@@ -75,9 +76,9 @@ jobs:
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
-      # - name: Terraform Init
-      #   run: terraform init
-      #   working-directoy: ${{ env.TF_DIR }}
+      - name: Terraform Init
+        run: terraform init
+        working-directoy: ${{ env.TF_DIR }}
 
       # - name: Terraform Plan
       #   id: plan
