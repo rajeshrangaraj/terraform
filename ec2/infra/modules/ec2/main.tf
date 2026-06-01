@@ -67,7 +67,7 @@ resource "aws_db_instance" "this" {
   skip_final_snapshot = true
 
   tags = {
-    Environment = var.environment
+    Environment = var.env
     ManagedBy   = "terraform"
   }
 }
