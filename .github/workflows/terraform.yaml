@@ -62,7 +62,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::707421297413:role/github-actions-terraform-plan
           role-session-name: plan-${{ github.run_id }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Get AWS Account ID Dynamic
         id: account
@@ -85,7 +85,15 @@ jobs:
         run: terraform plan -detailed-exitcode -out=tfplan -var-file="envs/prod/terraform.tfvars"
         working-directory: ${{ env.TF_DIR }}
         env: 
-          TF_VAR_account_id: ${{ steps.get-account.outputs.account_id }}
+          TF_VAR_account_id: ${{ steps.account.outputs.account_id }}
+
+      - name: Upload Plan Artifact
+        if: steps.plan.outputs.exitcode == '2'
+        uses: actions/upload-artifact@v4
+        with: 
+          name: tfplan-${{ github.run_id }}
+          path: ${{ env.TF_DIR }}/tfplan
+          retention-days: 1
 
   # approval:
   #   name: Await Approval
@@ -101,7 +109,7 @@ jobs:
   apply:
     name: Terraform Apply
     runs-on: ubuntu-latest
-    # needs: approval
+    needs: plan
     # if: github.ref == 'refs/heads/main'
     # environment: prod
 
@@ -115,8 +123,8 @@ jobs:
           role-session-name: plan-${{ github.run_id }}
           aws-region: ${{ vars.AWS_REGION }}
 
-      - name: hashicorp/setup-terraform@v3
-        uses: actions/download-artifact@v4
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
