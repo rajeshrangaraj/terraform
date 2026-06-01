@@ -87,16 +87,16 @@ jobs:
         env: 
           TF_VAR_account_id: ${{ steps.get-account.outputs.account_id }}
 
-  approval:
-    name: Await Approval
-    runs-on: ubuntu-latest
-    needs: plan
-    if: |
-      github.ref == 'refs/heads/main' &&
-      needs.plan.output.exitcode == '2'
-    environment: prod
-    steps:
-      - run: echo "Approved -proceeding to apply"
+  # approval:
+  #   name: Await Approval
+  #   runs-on: ubuntu-latest
+  #   needs: plan
+  #   if: |
+  #     github.ref == 'refs/heads/main' &&
+  #     needs.plan.output.exitcode == '2'
+  #   environment: prod
+  #   steps:
+  #     - run: echo "Approved -proceeding to apply"
 
   apply:
     name: Terraform Apply
