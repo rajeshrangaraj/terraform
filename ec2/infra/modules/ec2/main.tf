@@ -37,8 +37,8 @@ data "aws_ami" "this" {
 
 #-- EC2  -----------------------------------
 resource "aws_instance" "this" {
-  ami           = data.aws_ami.this.id
-  instance_type = var.instance_type
+  ami                  = data.aws_ami.this.id
+  instance_type        = var.instance_type
   iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
 
   user_data = <<-EOF
@@ -55,12 +55,12 @@ resource "aws_instance" "this" {
 }
 
 resource "aws_db_instance" "this" {
-  identifier = "app-database"
-  engine = "postgres"
-  instance_class = "db.t3.micro"
+  identifier        = "app-database"
+  engine            = "postgres"
+  instance_class    = "db.t3.micro"
   allocated_storage = 20
 
-  db_name = "appdb"
+  db_name  = "appdb"
   username = local.db_credentials["username"]
   password = local.db_credentials["password"]
 
@@ -68,6 +68,6 @@ resource "aws_db_instance" "this" {
 
   tags = {
     Environment = var.environment
-    ManagedBy = "terraform"
+    ManagedBy   = "terraform"
   }
 }
