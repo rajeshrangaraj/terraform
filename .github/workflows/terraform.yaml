@@ -106,22 +106,22 @@ jobs:
     # environment: prod
 
     steps:
-      - uses: actions/checkout@4
+      - uses: actions/checkout@v4
 
       - name: Assume apply role via OIDC
-        uses: aws-actions/configure-aws-credential@4
+        uses: aws-actions/configure-aws-credential@v4
         with:
           role-to-assume: ${{ env.APPLY_ROLE }}
           role-session-name: "apply-${{ github.run_id }}"
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: hashicorp/setup-terraform@3
-        uses: actions/download-artifact@4
+      - name: hashicorp/setup-terraform@v3
+        uses: actions/download-artifact@v4
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
       - name: Download plan
-        uses: actions/download-artifact@4
+        uses: actions/download-artifact@v4
         with:
           name: tfplan-${{ github.run_id  }}
           path: ${{ env.TF_DIR }}
