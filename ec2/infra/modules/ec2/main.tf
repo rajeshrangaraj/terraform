@@ -37,9 +37,9 @@ data "aws_ami" "this" {
 
 #-- EC2  -----------------------------------
 resource "aws_instance" "this" {
-  ami                  = data.aws_ami.this.id
-  instance_type        = var.instance_type
-  iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
+  ami           = data.aws_ami.this.id
+  instance_type = var.instance_type
+  # iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
 
   user_data = <<-EOF
     #!/bin/bash
