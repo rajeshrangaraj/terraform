@@ -111,9 +111,9 @@ jobs:
       - name: Assume apply role via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ env.APPLY_ROLE }}
-          role-session-name: "apply-${{ github.run_id }}"
-          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: arn:aws:iam::707421297413:role/github-actions-terraform-plan
+          role-session-name: plan-${{ github.run_id }}
+          aws-region: ${{ vars.AWS_REGION }}
 
       - name: hashicorp/setup-terraform@v3
         uses: actions/download-artifact@v4
