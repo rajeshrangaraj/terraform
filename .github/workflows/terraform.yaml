@@ -4,6 +4,7 @@ on:
   push:
     branches: 
       - main
+      - feat/my-ec2-change
   pull_request:
     branches: 
       - main
@@ -14,11 +15,9 @@ permissions:
   pull-requests: write
 
 env:
-  TF_VERSION: "1.8.0"
+  TF_VERSION: "1.15"
   AWS_REGION: "eu-west-2"
-  TF_DIR: "ec2/infra/envs/prod"
-  PLAN_ROLE:   "arn:aws:iam::707421297413:role/github-actions-terraform-plan"
-  APPLY_ROLE:  "arn:aws:iam::707421297413:role/github-actions-terraform-apply"
+  TF_DIR: "ec2/infra"
 
 jobs:
   validate:
@@ -33,9 +32,116 @@ jobs:
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
+      - name: Terraform version
+        run: terraform --version
+
       - name: Terraform format check
         run: terraform fmt -check -recursive ec2/
+      
+      - name: Terrafom Init
+        run: terraform init -backend=false
+        working-directory: ${{ env.TF_DIR }}
 
-      - name: Validate
+      - name: Terraform Validate
         run: terraform validate
         working-directory: ${{ env.TFDIR }}
+
+  plan:
+    name: Terraform plan
+    runs-on: ubuntu-latest
+    needs: validate
+    outputs:
+      exitcode: ${{ steps.plan.outputs.exitcode }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials via OIDC
+        id: aws-creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::707421297413:role/github-actions-terraform-plan
+          role-session-name: plan-${{ github.run_id }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Get AWS Account ID Dynamic
+        id: account
+        run: |
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          echo "account_id=${ACCOUNT_ID}" >> ${GITHUB_OUTPUT}
+          echo "Running in Account: ${ACCOUNT_ID}"
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ${{ env.TF_DIR }}
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -detailed-exitcode -out=tfplan -var-file="envs/prod/terraform.tfvars"
+        working-directory: ${{ env.TF_DIR }}
+        env: 
+          TF_VAR_account_id: ${{ steps.account.outputs.account_id }}
+
+      - name: Upload Plan Artifact
+        if: steps.plan.outputs.exitcode == '2'
+        uses: actions/upload-artifact@v4
+        with: 
+          name: tfplan-${{ github.run_id }}
+          path: ${{ env.TF_DIR }}/tfplan
+          retention-days: 1
+
+  # approval:
+  #   name: Await Approval
+  #   runs-on: ubuntu-latest
+  #   needs: plan
+  #   if: |
+  #     github.ref == 'refs/heads/main' &&
+  #     needs.plan.output.exitcode == '2'
+  #   environment: prod
+  #   steps:
+  #     - run: echo "Approved -proceeding to apply"
+
+  apply:
+    name: Terraform Apply
+    runs-on: ubuntu-latest
+    needs: plan
+    # if: github.ref == 'refs/heads/main'
+    # environment: prod
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Assume apply role via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::707421297413:role/github-actions-terraform-plan
+          role-session-name: plan-${{ github.run_id }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ${{ env.TF_DIR }}
+
+      - name: Download plan
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan-${{ github.run_id  }}
+          path: ${{ env.TF_DIR }}
+
+      - name: Apply
+        run: terraform apply -auto-approve -input=false tfplan
+        working-directory: ${{ env.TF_DIR }}
+
+      - name: Output instance details
+        run: terraform output -json
+        working-directory: ${{ env.TF_DIR }}
