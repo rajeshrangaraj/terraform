@@ -16,12 +16,12 @@ output "aws_partition" {
 
 output "db_username" {
   description = "Database username"
-  value = local.db_credentials["username"]
-  sensitive = false
+  value       = local.db_credentials["username"]
+  sensitive   = false
 }
 
 output "db_password" {
   description = "Database password"
-  value = local.db_credentials["password"]
-  sensitive = false
+  value       = local.db_credentials["password"]
+  sensitive   = false
 }
