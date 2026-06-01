@@ -116,6 +116,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: hashicorp/setup-terraform@3
+        uses: actions/download-artifact@4
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
@@ -123,11 +124,11 @@ jobs:
         uses: actions/download-artifact@4
         with:
           name: tfplan-${{ github.run_id  }}
-          path: ${{ env.TF_VAR }}
+          path: ${{ env.TF_DIR }}
 
       - name: Apply
         run: terraform apply -auto-approve -input=false tfplan
-        working-directory: ${{ env.TFDIR }}
+        working-directory: ${{ env.TF_DIR }}
 
       - name: Output instance details
         run: terraform output -json
