@@ -13,3 +13,7 @@ output "aws_caller_identity" {
 output "aws_partition" {
   value = data.aws_partition.current.partition
 }
+
+output "db_username" {
+  value = local.db_credentials["username"]
+}
